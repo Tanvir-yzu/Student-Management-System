@@ -1,0 +1,141 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom Form Styling */
+        input, select {
+            @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all;
+        }
+        
+        select {
+            @apply appearance-none pr-8;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="max-w-2xl mx-auto p-4">
+        <div class="bg-white rounded-xl shadow-2xl p-8 transform transition-all duration-300 hover:shadow-xl"
+             x-init="gsap.from($el, { 
+                 duration: 0.8, 
+                 opacity: 0, 
+                 y: 30, 
+                 ease: 'power2.out' 
+             })">
+            
+            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">
+                {% if object %}Update Student{% else %}New Student Registration{% endif %}
+            </h2>
+    
+            <form method="post" class="space-y-6" 
+                  x-data="{ submitted: false }"
+                  @submit="submitted = true"
+                  x-init="gsap.from($el.children, {
+                      duration: 0.6,
+                      opacity: 0,
+                      y: 20,
+                      stagger: 0.1,
+                      delay: 0.2
+                  })">
+                {% csrf_token %}
+                
+                <div class="space-y-4">
+                    <!-- Name Field -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.name.label }}
+                        </label>
+                        {{ form.name }}
+                        {% if form.name.errors %}
+                            <div class="mt-1 text-red-600 text-sm space-y-1">
+                                {% for error in form.name.errors %}
+                                    <p x-init="gsap.from($el, {duration: 0.3, x: -10, opacity: 0})">⚠️ {{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+    
+                    <!-- Email Field -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.email.label }}
+                        </label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="mt-1 text-red-600 text-sm space-y-1">
+                                {% for error in form.email.errors %}
+                                    <p x-init="gsap.from($el, {duration: 0.3, x: -10, opacity: 0})">⚠️ {{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+    
+                    <!-- Phone Field -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.phone.label }}
+                        </label>
+                        {{ form.phone }}
+                        {% if form.phone.errors %}
+                            <div class="mt-1 text-red-600 text-sm space-y-1">
+                                {% for error in form.phone.errors %}
+                                    <p x-init="gsap.from($el, {duration: 0.3, x: -10, opacity: 0})">⚠️ {{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+    
+                    <!-- Course Field -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.course.label }}
+                        </label>
+                        <div class="relative">
+                            {{ form.course }}
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                        </div>
+                        {% if form.course.errors %}
+                            <div class="mt-1 text-red-600 text-sm space-y-1">
+                                {% for error in form.course.errors %}
+                                    <p x-init="gsap.from($el, {duration: 0.3, x: -10, opacity: 0})">⚠️ {{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+    
+                <div class="mt-8 flex gap-4">
+                    <button type="submit" 
+                            class="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-[1.02]"
+                            x-bind:class="submitted ? 'opacity-75 cursor-not-allowed' : ''"
+                            x-bind:disabled="submitted">
+                        {% if object %}
+                            Update Student → 
+                        {% else %}
+                            Register Student →
+                        {% endif %}
+                    </button>
+                    
+                    <a href="{% url 'student-list' %}" 
+                       class="w-1/3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-[1.02] text-center">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

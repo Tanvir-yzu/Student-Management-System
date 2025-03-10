@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System</title>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 h-full">
+    <nav class="bg-blue-800/50 p-4 text-white shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="{% url 'student-list' %}" class="text-xl font-bold">Student Management</a>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-4 main-content">
+        {% if messages %}
+        <div x-data="{ show: true }" 
+             x-show="show"
+             x-init="gsap.from($el, { 
+                 duration: 0.4, 
+                 opacity: 0, 
+                 y: -20, 
+                 ease: 'power2.out' 
+             })">
+            {% for message in messages %}
+            <div class="p-4 rounded-lg mb-2 {% if message.tags == 'success' %}bg-green-500{% else %}bg-red-500{% endif %} text-white"
+                 x-init="setTimeout(() => {
+                     gsap.to($el, {
+                         duration: 0.3,
+                         opacity: 0,
+                         y: -20,
+                         onComplete: () => show = false
+                     })
+                 }, 3000)">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
+        <div class="spinner w-16 h-16 border-4 border-white border-t-transparent rounded-full"></div>
+    </div>
+
+    <style>
+        .spinner {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initial animations
+            gsap.from("nav", {
+                duration: 0.8,
+                y: -50,
+                opacity: 0,
+                ease: "power2.out"
+            });
+
+            gsap.from(".main-content", {
+                duration: 0.8,
+                opacity: 0,
+                y: 30,
+                delay: 0.3,
+                ease: "power2.out"
+            });
+
+            // Table row animations
+            gsap.from("tbody tr", {
+                duration: 0.6,
+                opacity: 0,
+                y: 20,
+                stagger: 0.1,
+                ease: "power2.out"
+            });
+
+            // Loading spinner handling
+            document.addEventListener('submit', () => {
+                gsap.to('#loading-spinner', {
+                    duration: 0.3,
+                    display: 'flex',
+                    opacity: 1
+                });
+            });
+
+            window.addEventListener('load', () => {
+                gsap.to('#loading-spinner', {
+                    duration: 0.3,
+                    display: 'none',
+                    opacity: 0
+                });
+            });
+        });
+    </script>
+</body>
+</html>
